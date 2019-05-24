@@ -37269,6 +37269,14 @@ var render = function() {
           _c(
             "button",
             {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: _vm.newPlayer.name.length > 2,
+                  expression: "newPlayer.name.length > 2"
+                }
+              ],
               staticClass: "btn btn-success btn-sm",
               on: {
                 click: function($event) {

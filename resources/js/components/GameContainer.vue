@@ -8,7 +8,7 @@
       <div v-show="showNewPlayerForm">
         <label for="newPlayer">Name:</label>
         <input id="newPlayer" type="text" v-model="newPlayer.name">
-        <button class="btn btn-success btn-sm"  @click="addPlayer()">Add</button>
+        <button v-show="newPlayer.name.length > 2" class="btn btn-success btn-sm"  @click="addPlayer()">Add</button>
         <button class="btn btn-danger btn-sm"  @click="resetForm()">Cancel</button>
       </div>
 

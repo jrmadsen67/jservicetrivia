@@ -6,8 +6,8 @@
       <button v-show="!showNewPlayerForm" class="btn btn-primary btn-sm" @click="showNewPlayerForm = true">New Player</button>
 
       <div v-show="showNewPlayerForm">
-        <label for="newplayer">Name:</label>
-        <input id="newplayer" type="text" v-model="newplayer.name">
+        <label for="newPlayer">Name:</label>
+        <input id="newPlayer" type="text" v-model="newPlayer.name">
         <button class="btn btn-success btn-sm"  @click="addPlayer()">Add</button>
         <button class="btn btn-danger btn-sm"  @click="resetForm()">Cancel</button>
       </div>
@@ -66,7 +66,7 @@
         players: this.parsePlayers(),
         showNewPlayerForm: false,
         gameStarted: false,
-        newplayer: {name:'', score:0},
+        newPlayer: {name:'', score:0},
         currentClue: {},
         currentPlayer: 0,
         showAnswerFlag: false,
@@ -74,7 +74,7 @@
     },
     methods:{
       addPlayer(){
-        this.players.push(this.newplayer);
+        this.players.push(this.newPlayer);
         this.postUpdate();
         this.resetForm();
       },
@@ -123,12 +123,12 @@
           });
       },
       resetForm(){
-        this.newplayer = {name:'', score:0};
+        this.newPlayer = {name:'', score:0};
         this.showNewPlayerForm = false;
       },
       parsePlayers(){
         let p = JSON.parse(this.game.players);
-        return (p == null)? []:p;
+        return (p == null)? [{name:'', score:0}] : p;
       }
     }
   }

@@ -1830,7 +1830,7 @@ __webpack_require__.r(__webpack_exports__);
       players: this.parsePlayers(),
       showNewPlayerForm: false,
       gameStarted: false,
-      newplayer: {
+      newPlayer: {
         name: '',
         score: 0
       },
@@ -1841,7 +1841,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     addPlayer: function addPlayer() {
-      this.players.push(this.newplayer);
+      this.players.push(this.newPlayer);
       this.postUpdate();
       this.resetForm();
     },
@@ -1889,7 +1889,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     resetForm: function resetForm() {
-      this.newplayer = {
+      this.newPlayer = {
         name: '',
         score: 0
       };
@@ -1897,7 +1897,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     parsePlayers: function parsePlayers() {
       var p = JSON.parse(this.game.players);
-      return p == null ? [] : p;
+      return p == null ? [{
+        name: '',
+        score: 0
+      }] : p;
     }
   }
 });
@@ -37243,25 +37246,25 @@ var render = function() {
           ]
         },
         [
-          _c("label", { attrs: { for: "newplayer" } }, [_vm._v("Name:")]),
+          _c("label", { attrs: { for: "newPlayer" } }, [_vm._v("Name:")]),
           _vm._v(" "),
           _c("input", {
             directives: [
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.newplayer.name,
-                expression: "newplayer.name"
+                value: _vm.newPlayer.name,
+                expression: "newPlayer.name"
               }
             ],
-            attrs: { id: "newplayer", type: "text" },
-            domProps: { value: _vm.newplayer.name },
+            attrs: { id: "newPlayer", type: "text" },
+            domProps: { value: _vm.newPlayer.name },
             on: {
               input: function($event) {
                 if ($event.target.composing) {
                   return
                 }
-                _vm.$set(_vm.newplayer, "name", $event.target.value)
+                _vm.$set(_vm.newPlayer, "name", $event.target.value)
               }
             }
           }),

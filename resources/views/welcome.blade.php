@@ -62,6 +62,10 @@
                 margin-bottom: 30px;
             }
         </style>
+
+        <!-- Styles -->
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
     </head>
     <body>
         <div class="flex-center position-ref full-height">
@@ -73,10 +77,10 @@
                 <div class="title m-b-md">
                    JService Trivia!
                 </div>
-                <div class="">
+                <div>
                     <form method="post" action="{{ route('games.game.store') }}">
                         @csrf()
-                        <button type="submit">New Game</button>
+                        <button class="btn btn-lg btn-success" type="submit">New Game</button>
                     </form>
                 </div>
             </div>

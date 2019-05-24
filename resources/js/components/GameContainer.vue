@@ -9,7 +9,7 @@
         <label for="newplayer">Name:</label>
         <input id="newplayer" type="text" v-model="newplayer.name">
         <button class="btn btn-success btn-sm"  @click="addPlayer()">Add</button>
-        <button class="btn btn-danger btn-sm"  @click="showNewPlayerForm = false">Cancel</button>
+        <button class="btn btn-danger btn-sm"  @click="resetForm()">Cancel</button>
       </div>
 
       <button v-show="!showNewPlayerForm" class="btn btn-success btn-sm" @click="startGame()">Start Game!</button>
@@ -39,7 +39,7 @@
     },
     data: function(){
       return {
-        players: [],
+        players: JSON.parse(this.game.players),
         showNewPlayerForm: false,
         newplayer: {name:'', score:0}
       }
@@ -47,14 +47,25 @@
     methods:{
       addPlayer(){
         this.players.push(this.newplayer);
-        this.newplayer = {name:'', score:0};
-        this.showNewPlayerForm = false;
+        this.postUpdate();
+        this.resetForm();
       },
       startGame(){
-        // axios.post(route(url), {'level': level})
-        //   .then((resp) => {
-        //
-        //   });
+        this.postUpdate();
+      },
+      postUpdate(){
+        let post = {id: this.game.id, players: this.players};
+        axios.put(route('api.games.game.update', [this.game.id]), post)
+          .then((resp) => {
+            // return response.data;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      },
+      resetForm(){
+        this.newplayer = {name:'', score:0};
+        this.showNewPlayerForm = false;
       }
     }
   }

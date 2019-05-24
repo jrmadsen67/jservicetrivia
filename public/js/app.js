@@ -1803,7 +1803,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      players: [],
+      players: JSON.parse(this.game.players),
       showNewPlayerForm: false,
       newplayer: {
         name: '',
@@ -1814,16 +1814,28 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     addPlayer: function addPlayer() {
       this.players.push(this.newplayer);
+      this.postUpdate();
+      this.resetForm();
+    },
+    startGame: function startGame() {
+      this.postUpdate();
+    },
+    postUpdate: function postUpdate() {
+      var post = {
+        id: this.game.id,
+        players: this.players
+      };
+      axios.put(route('api.games.game.update', [this.game.id]), post).then(function (resp) {// return response.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    resetForm: function resetForm() {
       this.newplayer = {
         name: '',
         score: 0
       };
       this.showNewPlayerForm = false;
-    },
-    startGame: function startGame() {// axios.post(route(url), {'level': level})
-      //   .then((resp) => {
-      //
-      //   });
     }
   }
 });
@@ -37211,7 +37223,7 @@ var render = function() {
               staticClass: "btn btn-danger btn-sm",
               on: {
                 click: function($event) {
-                  _vm.showNewPlayerForm = false
+                  return _vm.resetForm()
                 }
               }
             },

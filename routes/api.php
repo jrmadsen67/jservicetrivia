@@ -15,8 +15,6 @@ use Illuminate\Http\Request;
 
 Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
     Route::group(['prefix' => 'games', 'as' => 'games.'], function () {
-        Route::get('/{game}', 'GamesController@show')->name('game.show');
-        Route::post('', 'GamesController@store')->name('game.store');
-
+        Route::put('/{game}', 'GamesController@update')->name('game.update');
     });
 });

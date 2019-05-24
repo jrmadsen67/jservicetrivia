@@ -15,4 +15,11 @@ class Clue extends Model
         'answer',
         'used',
     ];
+
+    public static function getNextClue($game_id){
+        return Clue::whereGameId($game_id)
+            ->whereUsed(0)
+            ->inRandomOrder()
+            ->first();
+    }
 }

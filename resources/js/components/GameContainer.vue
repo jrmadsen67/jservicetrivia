@@ -12,7 +12,7 @@
         <button class="btn btn-danger btn-sm"  @click="resetForm()">Cancel</button>
       </div>
 
-      <button v-show="!showNewPlayerForm && players.length" class="btn btn-success btn-sm" @click="startGame()">Start Game!</button>
+      <button v-show="showStartGameBtn()" class="btn btn-success btn-sm" @click="startGame()">Start Game!</button>
 
     </div>
 
@@ -29,6 +29,30 @@
         </tbody>
       </table>
     </div>
+
+    <div v-show="gameStarted" class="mt-10 row justify-content-center">
+      <table class="w-1/2 table table-sm">
+        <thead>
+          <tr><th>Question for {{ players[currentPlayer].name }}</th></tr>
+          <tr><td>{{ currentClue.question }}</td></tr>
+        </thead>
+        <tbody>
+          <tr v-show="!showAnswerFlag">
+            <td>
+              <button class="btn btn-primary btn-sm"  @click="showAnswer()">Show Answer</button>
+            </td>
+          </tr>
+          <tr v-show="showAnswerFlag"><td>Answer: {{ currentClue.answer}}</td></tr>
+          <tr v-show="showAnswerFlag">
+            <td>
+              <button class="btn btn-success btn-sm"  @click="answerCorrect()">Correct!</button>
+              <button class="btn btn-danger btn-sm"  @click="answerWrong()">Wrong</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </template>
 
@@ -41,7 +65,11 @@
       return {
         players: this.parsePlayers(),
         showNewPlayerForm: false,
-        newplayer: {name:'', score:0}
+        gameStarted: false,
+        newplayer: {name:'', score:0},
+        currentClue: {},
+        currentPlayer: 0,
+        showAnswerFlag: false,
       }
     },
     methods:{
@@ -52,13 +80,47 @@
       },
       startGame(){
         this.postUpdate();
+        this.getClue();
       },
+      setCurrentPlayer(){
+        this.currentPlayer = (this.currentPlayer + 1 > this.players.length -1)?0:this.currentPlayer + 1;
+      },
+      showStartGameBtn(){
+        return !this.showNewPlayerForm && this.players.length && !this.gameStarted;
+      },
+
+      showAnswer(){
+        this.showAnswerFlag = true;
+      },
+      answerCorrect(){
+        this.getClue();
+        this.showAnswerFlag = false;
+        this.setCurrentPlayer();
+      },
+      answerWrong(){
+        this.getClue();
+        this.showAnswerFlag = false;
+        this.setCurrentPlayer();
+      },
+
       postUpdate(){
         let post = {id: this.game.id, players: this.players};
         axios.put(route('api.games.game.update', [this.game.id]), post)
           .then((resp) => {
             // return response.data;
           })
+          .catch(function (error) {
+            console.log(error);
+          });
+      },
+      getClue(){
+         axios.get(route('api.clues.clue.get-next', {game_id: this.game.id}))
+          .then((resp) => {
+            this.currentClue = resp.data.data;
+          })
+           .then((resp) => {
+             this.gameStarted = true;
+           })
           .catch(function (error) {
             console.log(error);
           });

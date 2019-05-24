@@ -17,4 +17,8 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
     Route::group(['prefix' => 'games', 'as' => 'games.'], function () {
         Route::put('/{game}', 'GamesController@update')->name('game.update');
     });
+
+    Route::group(['prefix' => 'clues', 'as' => 'clues.'], function () {
+        Route::get('', 'CluesController@getNext')->name('clue.get-next');
+    });
 });

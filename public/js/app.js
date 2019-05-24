@@ -1797,6 +1797,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     game: Object
@@ -1805,10 +1829,14 @@ __webpack_require__.r(__webpack_exports__);
     return {
       players: this.parsePlayers(),
       showNewPlayerForm: false,
+      gameStarted: false,
       newplayer: {
         name: '',
         score: 0
-      }
+      },
+      currentClue: {},
+      currentPlayer: 0,
+      showAnswerFlag: false
     };
   },
   methods: {
@@ -1819,6 +1847,26 @@ __webpack_require__.r(__webpack_exports__);
     },
     startGame: function startGame() {
       this.postUpdate();
+      this.getClue();
+    },
+    setCurrentPlayer: function setCurrentPlayer() {
+      this.currentPlayer = this.currentPlayer + 1 > this.players.length - 1 ? 0 : this.currentPlayer + 1;
+    },
+    showStartGameBtn: function showStartGameBtn() {
+      return !this.showNewPlayerForm && this.players.length && !this.gameStarted;
+    },
+    showAnswer: function showAnswer() {
+      this.showAnswerFlag = true;
+    },
+    answerCorrect: function answerCorrect() {
+      this.getClue();
+      this.showAnswerFlag = false;
+      this.setCurrentPlayer();
+    },
+    answerWrong: function answerWrong() {
+      this.getClue();
+      this.showAnswerFlag = false;
+      this.setCurrentPlayer();
     },
     postUpdate: function postUpdate() {
       var post = {
@@ -1826,6 +1874,19 @@ __webpack_require__.r(__webpack_exports__);
         players: this.players
       };
       axios.put(route('api.games.game.update', [this.game.id]), post).then(function (resp) {// return response.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    getClue: function getClue() {
+      var _this = this;
+
+      axios.get(route('api.clues.clue.get-next', {
+        game_id: this.game.id
+      })).then(function (resp) {
+        _this.currentClue = resp.data.data;
+      }).then(function (resp) {
+        _this.gameStarted = true;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -37243,8 +37304,8 @@ var render = function() {
             {
               name: "show",
               rawName: "v-show",
-              value: !_vm.showNewPlayerForm && _vm.players.length,
-              expression: "!showNewPlayerForm && players.length"
+              value: _vm.showStartGameBtn(),
+              expression: "showStartGameBtn()"
             }
           ],
           staticClass: "btn btn-success btn-sm",
@@ -37274,7 +37335,127 @@ var render = function() {
           0
         )
       ])
-    ])
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.gameStarted,
+            expression: "gameStarted"
+          }
+        ],
+        staticClass: "mt-10 row justify-content-center"
+      },
+      [
+        _c("table", { staticClass: "w-1/2 table table-sm" }, [
+          _c("thead", [
+            _c("tr", [
+              _c("th", [
+                _vm._v(
+                  "Question for " + _vm._s(_vm.players[_vm.currentPlayer].name)
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("tr", [_c("td", [_vm._v(_vm._s(_vm.currentClue.question))])])
+          ]),
+          _vm._v(" "),
+          _c("tbody", [
+            _c(
+              "tr",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: !_vm.showAnswerFlag,
+                    expression: "!showAnswerFlag"
+                  }
+                ]
+              },
+              [
+                _c("td", [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary btn-sm",
+                      on: {
+                        click: function($event) {
+                          return _vm.showAnswer()
+                        }
+                      }
+                    },
+                    [_vm._v("Show Answer")]
+                  )
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "tr",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.showAnswerFlag,
+                    expression: "showAnswerFlag"
+                  }
+                ]
+              },
+              [_c("td", [_vm._v("Answer: " + _vm._s(_vm.currentClue.answer))])]
+            ),
+            _vm._v(" "),
+            _c(
+              "tr",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.showAnswerFlag,
+                    expression: "showAnswerFlag"
+                  }
+                ]
+              },
+              [
+                _c("td", [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success btn-sm",
+                      on: {
+                        click: function($event) {
+                          return _vm.answerCorrect()
+                        }
+                      }
+                    },
+                    [_vm._v("Correct!")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-danger btn-sm",
+                      on: {
+                        click: function($event) {
+                          return _vm.answerWrong()
+                        }
+                      }
+                    },
+                    [_vm._v("Wrong")]
+                  )
+                ])
+              ]
+            )
+          ])
+        ])
+      ]
+    )
   ])
 }
 var staticRenderFns = [

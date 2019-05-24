@@ -13,6 +13,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
+    Route::group(['prefix' => 'games', 'as' => 'games.'], function () {
+        Route::get('/{game}', 'GamesController@show')->name('game.show');
+        Route::post('', 'GamesController@store')->name('game.store');
+
+    });
 });

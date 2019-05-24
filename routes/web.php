@@ -14,3 +14,8 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group(['prefix' => 'games', 'as' => 'games.'], function () {
+    Route::get('/{game}', 'GamesController@show')->name('game.show');
+    Route::post('', 'GamesController@store')->name('game.store');
+});

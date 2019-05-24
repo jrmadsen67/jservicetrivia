@@ -1803,7 +1803,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      players: JSON.parse(this.game.players),
+      players: this.parsePlayers(),
       showNewPlayerForm: false,
       newplayer: {
         name: '',
@@ -1836,6 +1836,10 @@ __webpack_require__.r(__webpack_exports__);
         score: 0
       };
       this.showNewPlayerForm = false;
+    },
+    parsePlayers: function parsePlayers() {
+      var p = JSON.parse(this.game.players);
+      return p == null ? [] : p;
     }
   }
 });
@@ -37239,8 +37243,8 @@ var render = function() {
             {
               name: "show",
               rawName: "v-show",
-              value: !_vm.showNewPlayerForm,
-              expression: "!showNewPlayerForm"
+              value: !_vm.showNewPlayerForm && _vm.players.length,
+              expression: "!showNewPlayerForm && players.length"
             }
           ],
           staticClass: "btn btn-success btn-sm",

@@ -12,7 +12,7 @@
         <button class="btn btn-danger btn-sm"  @click="resetForm()">Cancel</button>
       </div>
 
-      <button v-show="!showNewPlayerForm" class="btn btn-success btn-sm" @click="startGame()">Start Game!</button>
+      <button v-show="!showNewPlayerForm && players.length" class="btn btn-success btn-sm" @click="startGame()">Start Game!</button>
 
     </div>
 
@@ -39,7 +39,7 @@
     },
     data: function(){
       return {
-        players: JSON.parse(this.game.players),
+        players: this.parsePlayers(),
         showNewPlayerForm: false,
         newplayer: {name:'', score:0}
       }
@@ -66,6 +66,10 @@
       resetForm(){
         this.newplayer = {name:'', score:0};
         this.showNewPlayerForm = false;
+      },
+      parsePlayers(){
+        let p = JSON.parse(this.game.players);
+        return (p == null)? []:p;
       }
     }
   }

@@ -3,7 +3,7 @@
     <h3 class="mb-10">Welcome to Game {{ game.id }} of JService Trivia!</h3>
 
     <div class="mb-4">
-      <button v-show="!showNewPlayerForm" class="btn btn-primary btn-sm" @click="showNewPlayerForm = true">New Player</button>
+      <button v-show="!showNewPlayerForm && !gameStarted" class="btn btn-primary btn-sm" @click="showNewPlayerForm = true">New Player</button>
 
       <div v-show="showNewPlayerForm">
         <label for="newPlayer">Name:</label>
@@ -30,10 +30,10 @@
       </table>
     </div>
 
-    <div v-show="gameStarted" class="mt-10 row justify-content-center">
+    <div v-if="gameStarted" class="mt-10 row justify-content-center">
       <table class="w-1/2 table table-sm">
         <thead>
-          <tr><th>Question for {{ players[currentPlayer].name }}  -  Value: {{ currentClue.difficulty }} pts</th></tr>
+          <tr><th>Question for {{ players[currentPlayerIndex].name }}  -  Value: {{ currentClue.difficulty }} pts</th></tr>
           <tr><td>{{ currentClue.question }}</td></tr>
         </thead>
         <tbody>
@@ -68,7 +68,7 @@
         gameStarted: false,
         newPlayer: {name:'', score:0},
         currentClue: {},
-        currentPlayer: 0,
+        currentPlayerIndex: 0,
         showAnswerFlag: false,
       }
     },
@@ -83,7 +83,7 @@
         this.getClue();
       },
       setCurrentPlayer(){
-        this.currentPlayer = (this.currentPlayer + 1 > this.players.length -1)?0:this.currentPlayer + 1;
+        this.currentPlayerIndex = (this.currentPlayerIndex + 1 > this.players.length -1)?0:this.currentPlayerIndex + 1;
       },
       showStartGameBtn(){
         return !this.showNewPlayerForm && this.players.length && !this.gameStarted;
@@ -93,7 +93,7 @@
         this.showAnswerFlag = true;
       },
       updateScore(value){
-        this.players[this.currentPlayer].score += value;
+        this.players[this.currentPlayerIndex].score += value;
         this.postUpdate();
         this.getClue();
         this.showAnswerFlag = false;
@@ -128,7 +128,7 @@
       },
       parsePlayers(){
         let p = JSON.parse(this.game.players);
-        return (p == null)? [{name:'', score:0}] : p;
+        return (p == null)? [] : p;
       }
     }
   }

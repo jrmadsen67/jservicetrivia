@@ -1835,7 +1835,7 @@ __webpack_require__.r(__webpack_exports__);
         score: 0
       },
       currentClue: {},
-      currentPlayer: 0,
+      currentPlayerIndex: 0,
       showAnswerFlag: false
     };
   },
@@ -1850,7 +1850,7 @@ __webpack_require__.r(__webpack_exports__);
       this.getClue();
     },
     setCurrentPlayer: function setCurrentPlayer() {
-      this.currentPlayer = this.currentPlayer + 1 > this.players.length - 1 ? 0 : this.currentPlayer + 1;
+      this.currentPlayerIndex = this.currentPlayerIndex + 1 > this.players.length - 1 ? 0 : this.currentPlayerIndex + 1;
     },
     showStartGameBtn: function showStartGameBtn() {
       return !this.showNewPlayerForm && this.players.length && !this.gameStarted;
@@ -1859,7 +1859,7 @@ __webpack_require__.r(__webpack_exports__);
       this.showAnswerFlag = true;
     },
     updateScore: function updateScore(value) {
-      this.players[this.currentPlayer].score += value;
+      this.players[this.currentPlayerIndex].score += value;
       this.postUpdate();
       this.getClue();
       this.showAnswerFlag = false;
@@ -1897,10 +1897,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     parsePlayers: function parsePlayers() {
       var p = JSON.parse(this.game.players);
-      return p == null ? [{
-        name: '',
-        score: 0
-      }] : p;
+      return p == null ? [] : p;
     }
   }
 });
@@ -37219,8 +37216,8 @@ var render = function() {
             {
               name: "show",
               rawName: "v-show",
-              value: !_vm.showNewPlayerForm,
-              expression: "!showNewPlayerForm"
+              value: !_vm.showNewPlayerForm && !_vm.gameStarted,
+              expression: "!showNewPlayerForm && !gameStarted"
             }
           ],
           staticClass: "btn btn-primary btn-sm",
@@ -37337,131 +37334,123 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _c(
-      "div",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.gameStarted,
-            expression: "gameStarted"
-          }
-        ],
-        staticClass: "mt-10 row justify-content-center"
-      },
-      [
-        _c("table", { staticClass: "w-1/2 table table-sm" }, [
-          _c("thead", [
-            _c("tr", [
-              _c("th", [
-                _vm._v(
-                  "Question for " +
-                    _vm._s(_vm.players[_vm.currentPlayer].name) +
-                    "  -  Value: " +
-                    _vm._s(_vm.currentClue.difficulty) +
-                    " pts"
-                )
-              ])
+    _vm.gameStarted
+      ? _c("div", { staticClass: "mt-10 row justify-content-center" }, [
+          _c("table", { staticClass: "w-1/2 table table-sm" }, [
+            _c("thead", [
+              _c("tr", [
+                _c("th", [
+                  _vm._v(
+                    "Question for " +
+                      _vm._s(_vm.players[_vm.currentPlayerIndex].name) +
+                      "  -  Value: " +
+                      _vm._s(_vm.currentClue.difficulty) +
+                      " pts"
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("tr", [_c("td", [_vm._v(_vm._s(_vm.currentClue.question))])])
             ]),
             _vm._v(" "),
-            _c("tr", [_c("td", [_vm._v(_vm._s(_vm.currentClue.question))])])
-          ]),
-          _vm._v(" "),
-          _c("tbody", [
-            _c(
-              "tr",
-              {
-                directives: [
-                  {
-                    name: "show",
-                    rawName: "v-show",
-                    value: !_vm.showAnswerFlag,
-                    expression: "!showAnswerFlag"
-                  }
-                ]
-              },
-              [
-                _c("td", [
-                  _c(
-                    "button",
+            _c("tbody", [
+              _c(
+                "tr",
+                {
+                  directives: [
                     {
-                      staticClass: "btn btn-primary btn-sm",
-                      on: {
-                        click: function($event) {
-                          return _vm.showAnswer()
+                      name: "show",
+                      rawName: "v-show",
+                      value: !_vm.showAnswerFlag,
+                      expression: "!showAnswerFlag"
+                    }
+                  ]
+                },
+                [
+                  _c("td", [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-sm",
+                        on: {
+                          click: function($event) {
+                            return _vm.showAnswer()
+                          }
                         }
-                      }
-                    },
-                    [_vm._v("Show Answer")]
-                  )
-                ])
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "tr",
-              {
-                directives: [
-                  {
-                    name: "show",
-                    rawName: "v-show",
-                    value: _vm.showAnswerFlag,
-                    expression: "showAnswerFlag"
-                  }
+                      },
+                      [_vm._v("Show Answer")]
+                    )
+                  ])
                 ]
-              },
-              [_c("td", [_vm._v("Answer: " + _vm._s(_vm.currentClue.answer))])]
-            ),
-            _vm._v(" "),
-            _c(
-              "tr",
-              {
-                directives: [
-                  {
-                    name: "show",
-                    rawName: "v-show",
-                    value: _vm.showAnswerFlag,
-                    expression: "showAnswerFlag"
-                  }
+              ),
+              _vm._v(" "),
+              _c(
+                "tr",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.showAnswerFlag,
+                      expression: "showAnswerFlag"
+                    }
+                  ]
+                },
+                [
+                  _c("td", [
+                    _vm._v("Answer: " + _vm._s(_vm.currentClue.answer))
+                  ])
                 ]
-              },
-              [
-                _c("td", [
-                  _c(
-                    "button",
+              ),
+              _vm._v(" "),
+              _c(
+                "tr",
+                {
+                  directives: [
                     {
-                      staticClass: "btn btn-success btn-sm",
-                      on: {
-                        click: function($event) {
-                          return _vm.updateScore(_vm.currentClue.difficulty)
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.showAnswerFlag,
+                      expression: "showAnswerFlag"
+                    }
+                  ]
+                },
+                [
+                  _c("td", [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-success btn-sm",
+                        on: {
+                          click: function($event) {
+                            return _vm.updateScore(_vm.currentClue.difficulty)
+                          }
                         }
-                      }
-                    },
-                    [_vm._v("Correct!")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-danger btn-sm",
-                      on: {
-                        click: function($event) {
-                          return _vm.updateScore(
-                            _vm.currentClue.difficulty * -1
-                          )
+                      },
+                      [_vm._v("Correct!")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-danger btn-sm",
+                        on: {
+                          click: function($event) {
+                            return _vm.updateScore(
+                              _vm.currentClue.difficulty * -1
+                            )
+                          }
                         }
-                      }
-                    },
-                    [_vm._v("Wrong")]
-                  )
-                ])
-              ]
-            )
+                      },
+                      [_vm._v("Wrong")]
+                    )
+                  ])
+                ]
+              )
+            ])
           ])
         ])
-      ]
-    )
+      : _vm._e()
   ])
 }
 var staticRenderFns = [

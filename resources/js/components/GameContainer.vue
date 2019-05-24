@@ -33,7 +33,7 @@
     <div v-show="gameStarted" class="mt-10 row justify-content-center">
       <table class="w-1/2 table table-sm">
         <thead>
-          <tr><th>Question for {{ players[currentPlayer].name }}</th></tr>
+          <tr><th>Question for {{ players[currentPlayer].name }}  -  Value: {{ currentClue.difficulty }} pts</th></tr>
           <tr><td>{{ currentClue.question }}</td></tr>
         </thead>
         <tbody>
@@ -45,8 +45,8 @@
           <tr v-show="showAnswerFlag"><td>Answer: {{ currentClue.answer}}</td></tr>
           <tr v-show="showAnswerFlag">
             <td>
-              <button class="btn btn-success btn-sm"  @click="answerCorrect()">Correct!</button>
-              <button class="btn btn-danger btn-sm"  @click="answerWrong()">Wrong</button>
+              <button class="btn btn-success btn-sm"  @click="updateScore(currentClue.difficulty)">Correct!</button>
+              <button class="btn btn-danger btn-sm"  @click="updateScore(currentClue.difficulty * -1)">Wrong</button>
             </td>
           </tr>
         </tbody>
@@ -92,12 +92,9 @@
       showAnswer(){
         this.showAnswerFlag = true;
       },
-      answerCorrect(){
-        this.getClue();
-        this.showAnswerFlag = false;
-        this.setCurrentPlayer();
-      },
-      answerWrong(){
+      updateScore(value){
+        this.players[this.currentPlayer].score += value;
+        this.postUpdate();
         this.getClue();
         this.showAnswerFlag = false;
         this.setCurrentPlayer();
@@ -105,7 +102,7 @@
 
       postUpdate(){
         let post = {id: this.game.id, players: this.players};
-        axios.put(route('api.games.game.update', [this.game.id]), post)
+        return axios.put(route('api.games.game.update', [this.game.id]), post)
           .then((resp) => {
             // return response.data;
           })
@@ -114,7 +111,7 @@
           });
       },
       getClue(){
-         axios.get(route('api.clues.clue.get-next', {game_id: this.game.id}))
+        return axios.get(route('api.clues.clue.get-next', {game_id: this.game.id}))
           .then((resp) => {
             this.currentClue = resp.data.data;
           })

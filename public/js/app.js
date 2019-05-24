@@ -1858,12 +1858,9 @@ __webpack_require__.r(__webpack_exports__);
     showAnswer: function showAnswer() {
       this.showAnswerFlag = true;
     },
-    answerCorrect: function answerCorrect() {
-      this.getClue();
-      this.showAnswerFlag = false;
-      this.setCurrentPlayer();
-    },
-    answerWrong: function answerWrong() {
+    updateScore: function updateScore(value) {
+      this.players[this.currentPlayer].score += value;
+      this.postUpdate();
       this.getClue();
       this.showAnswerFlag = false;
       this.setCurrentPlayer();
@@ -1873,7 +1870,7 @@ __webpack_require__.r(__webpack_exports__);
         id: this.game.id,
         players: this.players
       };
-      axios.put(route('api.games.game.update', [this.game.id]), post).then(function (resp) {// return response.data;
+      return axios.put(route('api.games.game.update', [this.game.id]), post).then(function (resp) {// return response.data;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -1881,7 +1878,7 @@ __webpack_require__.r(__webpack_exports__);
     getClue: function getClue() {
       var _this = this;
 
-      axios.get(route('api.clues.clue.get-next', {
+      return axios.get(route('api.clues.clue.get-next', {
         game_id: this.game.id
       })).then(function (resp) {
         _this.currentClue = resp.data.data;
@@ -37356,7 +37353,11 @@ var render = function() {
             _c("tr", [
               _c("th", [
                 _vm._v(
-                  "Question for " + _vm._s(_vm.players[_vm.currentPlayer].name)
+                  "Question for " +
+                    _vm._s(_vm.players[_vm.currentPlayer].name) +
+                    "  -  Value: " +
+                    _vm._s(_vm.currentClue.difficulty) +
+                    " pts"
                 )
               ])
             ]),
@@ -37430,7 +37431,7 @@ var render = function() {
                       staticClass: "btn btn-success btn-sm",
                       on: {
                         click: function($event) {
-                          return _vm.answerCorrect()
+                          return _vm.updateScore(_vm.currentClue.difficulty)
                         }
                       }
                     },
@@ -37443,7 +37444,9 @@ var render = function() {
                       staticClass: "btn btn-danger btn-sm",
                       on: {
                         click: function($event) {
-                          return _vm.answerWrong()
+                          return _vm.updateScore(
+                            _vm.currentClue.difficulty * -1
+                          )
                         }
                       }
                     },
